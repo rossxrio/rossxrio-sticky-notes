@@ -6,9 +6,11 @@ import java.awt.*;
 public class Note extends JPanel {
     private String stickyNoteContent;
     private JLabel noteName;
+    private String noteTitle;
 
     public Note(String name, String stickyNoteContent, int w, int h) {
         this.stickyNoteContent = stickyNoteContent;
+        noteTitle = name;
 
         noteName = new JLabel(name);
         noteName.setForeground(Color.WHITE);
@@ -69,9 +71,9 @@ public class Note extends JPanel {
         parent.repaint();
     }
 
-    private void openStickyNote() {
+    public void openStickyNote() {
         if (!stickyNoteContent.isBlank()) {
-            new StickyNotes(noteName.getName(), stickyNoteContent.substring(1, stickyNoteContent.length()-2), this);
-        } else new StickyNotes(noteName.getName(), stickyNoteContent, this);
+            new StickyNotes(noteTitle, stickyNoteContent.substring(1, stickyNoteContent.length()-2), this);
+        } else new StickyNotes(noteTitle, stickyNoteContent, this);
     }
 }

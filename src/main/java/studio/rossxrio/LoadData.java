@@ -4,13 +4,11 @@ import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoadData {
     public static void loadData(JPanel panel, ArrayList<Note> notes) throws Exception {
-        // TODO Rework
         BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/NOTES/.save.txt"));
         StringBuilder gatherNotes = new StringBuilder();
         String str;
@@ -29,7 +27,7 @@ public class LoadData {
 
         for (String s : noteData) {
             if (!s.isBlank()) {
-                Note note = new Note(s.substring(1, Math.min(s.length(), 10)-1).trim(), s+",", 320, 40);
+                Note note = new Note(s.substring(1, Math.min(s.length(), 15)-1).trim(), s+",", 320, 40);
                 notes.add(note);
                 panel.add(note);
             }
