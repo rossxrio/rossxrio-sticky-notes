@@ -68,7 +68,7 @@ public class Window extends JFrame {
     }
 
     private void addNote() {
-        NOTES.add(new Note("new", "Any TO-DO'S?", 320, 40));
+        NOTES.add(new Note("new", "", 320, 40));
         mainContentContainer.add(NOTES.getLast());
         nNotes++;
         if (nNotes == 9) {

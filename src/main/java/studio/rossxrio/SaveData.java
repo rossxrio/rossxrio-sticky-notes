@@ -6,12 +6,15 @@ import java.util.ArrayList;
 
 public class SaveData {
     public static void saveData(ArrayList<Note> notes) throws Exception {
+        // TODO Rework
         BufferedWriter bw = new BufferedWriter(new FileWriter("./src/main/resources/NOTES/.save.txt"));
-        String noteData;
+        StringBuilder notesContent = new StringBuilder();
         for (Note n : notes) {
-            noteData = n.getStickyNoteContent() + "\n";
-            bw.write(noteData);
-            bw.flush();
+            notesContent.append(n.getStickyNoteContent()).append('\n');
+
         }
+        bw.write(notesContent.toString());
+        bw.flush();
+        bw.close();
     }
 }

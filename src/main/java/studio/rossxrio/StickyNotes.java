@@ -23,19 +23,35 @@ public class StickyNotes extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                // TODO Rework
                 try {
-                    if(ta.getText().isBlank()) {
-                        note.setTitle("new");
-                        note.setStickyNoteContent("Any TO-DO's?");
+                    if (!ta.getText().isBlank()) {
+                        String formattedContent = "{"+ ta.getText().replaceAll("[{}]", "") + "},";
+                        note.setStickyNoteContent(formattedContent);
+                        note.setTitle(formattedContent.substring(1, Math.min(formattedContent.length(), 10) -2));
                     } else {
-                        StringBuilder sb = new StringBuilder(ta.getText());
-                        String title = sb.substring(0, Math.min(ta.getText().length(), 15));
-                        note.setTitle(title);
-                        note.setStickyNoteContent(sb.toString());
+                        note.setStickyNoteContent("{}");
+                        note.setTitle("new");
                     }
+
                 } catch (Exception ex) {
-                    System.err.println(ex);
+                    System.err.println(e);
                 }
+
+
+//                try {
+//                    if(ta.getText().isBlank()) {
+//                        note.setTitle("new");
+//                        note.setStickyNoteContent("Any TO-DO's?");
+//                    } else {
+//                        StringBuilder sb = new StringBuilder(ta.getText());
+//                        String title = sb.substring(0, Math.min(ta.getText().length(), 15));
+//                        note.setTitle(title);
+//                        note.setStickyNoteContent(sb.toString());
+//                    }
+//                } catch (Exception ex) {
+//                    System.err.println(ex);
+//                }
             }
         });
         this.setVisible(true);

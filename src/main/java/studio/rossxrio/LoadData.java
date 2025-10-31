@@ -1,33 +1,38 @@
 package studio.rossxrio;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoadData {
     public static void loadData(JPanel panel, ArrayList<Note> notes) throws Exception {
+        // TODO Rework
         BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/NOTES/.save.txt"));
-        StringBuilder sb = new StringBuilder();
-        String string;
-        while ((string = br.readLine()) != null) {
-            sb.append(string).append('\n');
+        StringBuilder gatherNotes = new StringBuilder();
+        String str;
+        while ((str = br.readLine()) != null) {
+            gatherNotes.append(str).append('\n');
+        }
+        if (gatherNotes.isEmpty()) return;
+
+        Pattern pattern = Pattern.compile("(\\{[^\\}]*\\})");
+        Matcher matcher = pattern.matcher(gatherNotes);
+        ArrayList<String> noteData = new ArrayList<>();
+
+        while (matcher.find()) {
+            noteData.add(matcher.group(1).trim());
         }
 
-        int n=0;
-
-        if (sb.isEmpty()) return;
-        String[] records = sb.toString().split("\n");
-        for (String record : records) {
-            System.out.println(record.length());
-            Note note = new Note(record.substring(0, Math.min(record.length(), 15)), record, 320, 40);
-            notes.add(note);
-            panel.add(note);
-            n++;
+        for (String s : noteData) {
+            if (!s.isBlank()) {
+                Note note = new Note(s.substring(1, Math.min(s.length(), 10)-1).trim(), s+",", 320, 40);
+                notes.add(note);
+                panel.add(note);
+            }
         }
-
-        panel.setLayout(new GridLayout(Math.max(n, 10), 1, 5, 5));
-
     }
 }

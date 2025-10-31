@@ -4,12 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Note extends JPanel {
-    private StickyNotes stickyNotes;
     private String stickyNoteContent;
     private JLabel noteName;
 
-    public Note(String name, String content, int w, int h) {
-        stickyNoteContent = content;
+    public Note(String name, String stickyNoteContent, int w, int h) {
+        this.stickyNoteContent = stickyNoteContent;
 
         noteName = new JLabel(name);
         noteName.setForeground(Color.WHITE);
@@ -29,7 +28,7 @@ public class Note extends JPanel {
         openStickyNoteButton.setForeground(Color.WHITE);
         openStickyNoteButton.setBorder(null);
         openStickyNoteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        openStickyNoteButton.addActionListener(l -> openStickyNote(name, content));
+        openStickyNoteButton.addActionListener(_ -> openStickyNote());
 
         JPanel wrapButtons = new JPanel();
         wrapButtons.setBackground(new Color(51, 51, 51));
@@ -54,17 +53,12 @@ public class Note extends JPanel {
         noteName.setText(name);
     }
 
-    public void setStickyNoteContent(String content) {
-        stickyNoteContent = content;
+    public void setStickyNoteContent(String stickyNoteContent) {
+        this.stickyNoteContent = stickyNoteContent;
     }
-
 
     public String getStickyNoteContent() {
         return stickyNoteContent;
-    }
-
-    public JLabel getNoteName() {
-        return noteName;
     }
 
     private void deleteNote() {
@@ -75,7 +69,9 @@ public class Note extends JPanel {
         parent.repaint();
     }
 
-    private void openStickyNote(String name, String content) {
-        stickyNotes = new StickyNotes(name, content, this);
+    private void openStickyNote() {
+        if (!stickyNoteContent.isBlank()) {
+            new StickyNotes(noteName.getName(), stickyNoteContent.substring(1, stickyNoteContent.length()-2), this);
+        } else new StickyNotes(noteName.getName(), stickyNoteContent, this);
     }
 }
