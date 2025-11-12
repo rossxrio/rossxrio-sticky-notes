@@ -1,6 +1,9 @@
 package studio.rossxrio;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -13,11 +16,12 @@ public class StickyNotes extends Frame {
     private JScrollPane jScrollPane;
 
     private Data data;
+    private Note context;
 
-    public StickyNotes(Data data) {
+    public StickyNotes(Data data, Note context) {
         super(300, 400);
         this.data = data;
-        this.data.setName("TEST");
+        this.context = context;
 
         noteFont = new NoteFont();
 
@@ -43,10 +47,12 @@ public class StickyNotes extends Frame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.out.println("closing...");
-                System.out.println(StickyNotes.this.data.getPath());
-                DataMgmt.saveData(StickyNotes.this.data, ta.getText());
-                DataMgmt.updateDataObjects(StickyNotes.this.data);
+                if (!data.getName().equalsIgnoreCase("new")) {
+                    DataMgmt.DATA_INDEX.add(data);
+                    DataMgmt.updateDataObjects();
+                    DataMgmt.saveData(StickyNotes.this.data, ta.getText());
+                }
+                dispose();
             }
         });
         this.setVisible(true);
@@ -73,12 +79,36 @@ public class StickyNotes extends Frame {
         ta.setCaretColor(Color.WHITE);
         ta.setFont(noteFont.getFont(Font.BOLD, 20));
         ta.setLineWrap(true);
-
         ta.setText(DataMgmt.loadData(data));
+
+        ta.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                onUpdateText();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                onUpdateText();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                onUpdateText();
+            }
+        });
     }
 
-
-    public static void main(String[] args) {
-        new StickyNotes(new Data("new"));
+    private void onUpdateText() {
+        try {
+            String[] name = ta.getDocument().getText(0, Math.min(ta.getDocument().getLength(), 15)).split("\n", 2);
+            data.setName((name[0].isBlank() ? "unnamed" : name[0]));
+            setNoteName();
+            context.setData(data);
+            context.setNoteLabel();
+            refresh();
+        } catch (BadLocationException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

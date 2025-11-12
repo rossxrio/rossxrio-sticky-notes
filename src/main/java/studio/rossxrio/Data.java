@@ -10,10 +10,20 @@ public class Data implements Serializable {
     private final static String DEFAULT_PATH = DataMgmt.NOTES_DIR.getPath();
 
     public Data(String name) {
-        this.name = name;
+        this.name = name.replaceAll(" ", "_");
         this.path = (name.isBlank() ?
-                String.format("%s%s%s%s%s.txt", DEFAULT_PATH, File.separator, "unnamed", File.separator, "unnamed") :
-                String.format("%s%s%s%s%s.txt", DEFAULT_PATH, File.separator, name, File.separator, name));
+                String.format("%s%s%s%s%s.txt",
+                        DEFAULT_PATH,
+                        File.separator,
+                        "unnamed",
+                        File.separator,
+                        "unnamed") :
+                String.format("%s%s%s%s%s.txt",
+                        DEFAULT_PATH,
+                        File.separator,
+                        this.name,
+                        File.separator,
+                        this.name));
     }
 
     public String getName() {
@@ -21,8 +31,13 @@ public class Data implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
-        path = String.format("%s%s%s%s%s.txt", DEFAULT_PATH, File.separator, this.name, File.separator, this.name);
+        this.name = name.replaceAll(" ", "_");
+        path = String.format("%s%s%s%s%s.txt",
+                DEFAULT_PATH,
+                File.separator,
+                this.name,
+                File.separator,
+                this.name);
     }
 
     public String getPath() {

@@ -33,6 +33,11 @@ public class Frame extends JFrame {
         this.setLocation(a, b);
     }
 
+    public void refresh() {
+        this.revalidate();
+        this.repaint();
+    }
+
     public class DraggableWindowZone implements MouseMotionListener, MouseInputListener {
         @Override
         public void mouseDragged(MouseEvent e) {

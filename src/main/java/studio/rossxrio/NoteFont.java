@@ -6,11 +6,13 @@ import java.io.InputStream;
 public class NoteFont {
     private Font font;
     public NoteFont() {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("fonts/0xProtoNerdFont-Regular.ttf");
+        InputStream is = NoteFont.class.getResourceAsStream("/fonts/0xProtoNerdFont-Regular.ttf");
         try {
-            font = Font.createFont(java.awt.Font.TRUETYPE_FONT, is);
+            assert is != null;
+            font = Font.createFont(Font.TRUETYPE_FONT, is);
         } catch (Exception e) {
             System.err.println(e);
+            font = new Font("arial", Font.BOLD, 20);
         }
     }
 

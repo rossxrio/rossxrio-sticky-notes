@@ -2,8 +2,6 @@ package studio.rossxrio;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class AppFrame extends Frame {
     private JLabel appName;
@@ -66,13 +64,13 @@ public class AppFrame extends Frame {
         this.setLocationRelativeTo(null);
         this.setLocation(startPos[0], startPos[1]);
         this.setResizable(false);
-        this.setUndecorated(true);
+        this.setUndecorated(false);
         this.setVisible(true);
     }
 
     private void setAppName() {
         appName.setForeground(Color.WHITE);
-        appName.setFont(noteFont.getFont(java.awt.Font.PLAIN, 25));
+        appName.setFont(noteFont.getFont(Font.BOLD, 25));
     }
 
     private JPanel setWrapTop() {
@@ -86,7 +84,7 @@ public class AppFrame extends Frame {
 
     private void setAddNoteButton() {
         addNoteButton.setBackground(new Color(32, 32, 32));
-        addNoteButton.setFont(noteFont.getFont(java.awt.Font.PLAIN, 30));
+        addNoteButton.setFont(noteFont.getFont(Font.BOLD, 30));
         addNoteButton.setForeground(Color.WHITE);
         addNoteButton.setBorder(null);
         addNoteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -131,18 +129,4 @@ public class AppFrame extends Frame {
 //        container.getInputMap().put(ksOpenLastNote, "aOpenLastNote");
 //        container.getActionMap().put("aOpenLastNote", aOpenLastNote);
 //    }
-
-
-    private void loadData() throws IOException {
-        refresh();
-    }
-
-    private void refresh() {
-        this.revalidate();
-        this.repaint();
-    }
-
-    private void onClose() throws IOException {
-        dispose();
-    }
 }

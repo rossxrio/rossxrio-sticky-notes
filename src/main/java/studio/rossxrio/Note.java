@@ -20,7 +20,7 @@ public class Note extends JPanel {
 
         noteFont = new NoteFont();
 
-        noteLabel = new JLabel(data.getName());
+        noteLabel = new JLabel();
         setNoteLabel();
 
         openStickyNoteButton = new JButton("->");
@@ -33,7 +33,7 @@ public class Note extends JPanel {
         setWrapButtons();
 
         wrapElements = new JPanel();
-        setwrapElements();
+        setWrapElements();
 
         wrapElements.add(noteLabel, BorderLayout.CENTER);
         wrapElements.add(wrapButtons, BorderLayout.EAST);
@@ -44,9 +44,15 @@ public class Note extends JPanel {
         this.setBackground(new Color(51, 51, 51));
     }
 
-    private void setNoteLabel() {
+    public void setNoteLabel() {
         noteLabel.setForeground(Color.WHITE);
         noteLabel.setFont(noteFont.getFont(Font.PLAIN, 15));
+        noteLabel.setText(data.getName());
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+        DataMgmt.updateDataObjects();
     }
 
     private void openStickyNoteButton() {
@@ -59,7 +65,7 @@ public class Note extends JPanel {
     }
 
     private void openStickyNote() {
-        new StickyNotes(data);
+        new StickyNotes(data, this);
     }
 
     private void setDeleteNoteButton() {
@@ -71,6 +77,15 @@ public class Note extends JPanel {
         deleteNoteButton.addActionListener(l -> deleteNote());
     }
 
+    private void deleteNote() {
+        DataMgmt.DATA_INDEX.remove(data);
+        DataMgmt.updateDataObjects();
+        Container parent = this.getParent();
+        parent.remove(this);
+        parent.revalidate();
+        parent.repaint();
+    }
+
     private void setWrapButtons() {
         wrapButtons.setBackground(new Color(51, 51, 51));
         wrapButtons.setLayout(new FlowLayout());
@@ -78,17 +93,8 @@ public class Note extends JPanel {
         wrapButtons.add(openStickyNoteButton);
     }
 
-    private void setwrapElements() {
+    private void setWrapElements() {
         wrapElements.setLayout(new BorderLayout());
         wrapElements.setBackground(new Color(51, 51, 51));
-    }
-
-    private void deleteNote() {
-        DataMgmt.DATA_INDEX.remove(data);
-        DataMgmt.updateDataObjects(null);
-        Container parent = this.getParent();
-        parent.remove(this);
-        parent.revalidate();
-        parent.repaint();
     }
 }
