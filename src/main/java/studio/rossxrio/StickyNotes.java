@@ -1,106 +1,84 @@
 package studio.rossxrio;
 
 import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class StickyNotes extends JFrame {
-    String name;
-    String content;
-    Note note;
-    JTextArea ta;
-    Action aCloseWindow = new CloseWindow();
-    private MouseEvent getPressed;
+public class StickyNotes extends Frame {
+    private JLabel noteName;
+    private NoteFont noteFont;
+    private JPanel topPanel;
+    private JTextArea ta;
+    private JScrollPane jScrollPane;
 
-    public StickyNotes(String name, String content, Note note) {
-        KeyStroke closeWindowKS= KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false);
-        this.name = name;
-        this.content = content;
-        this.note = note;
+    private Data data;
 
-        JLabel noteName = new JLabel(name);
+    public StickyNotes(Data data) {
+        super(300, 400);
+        this.data = data;
+        this.data.setName("TEST");
+
+        noteFont = new NoteFont();
+
+        noteName = new JLabel();
+        setNoteName();
+
+        topPanel = new JPanel();
+        setTopPanel();
+
+        ta = new JTextArea();
+        setTa();
+
+        jScrollPane = new JScrollPane(ta);
+        jScrollPane.setBorder(null);
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+
+        this.setLayout(new BorderLayout());
+        this.setAlwaysOnTop(true);
+        this.setUndecorated(false);
+        this.setLocationRelativeTo(this.getParent());
+        this.add(topPanel, BorderLayout.NORTH);
+        this.add(jScrollPane, BorderLayout.CENTER);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.out.println("closing...");
+                System.out.println(StickyNotes.this.data.getPath());
+                DataMgmt.saveData(StickyNotes.this.data, ta.getText());
+                DataMgmt.updateDataObjects(StickyNotes.this.data);
+            }
+        });
+        this.setVisible(true);
+    }
+
+    private void setNoteName() {
+        noteName.setText(data.getName());
         noteName.setForeground(Color.BLACK);
-        noteName.setFont(Fonts.getRegularFont(Font.PLAIN, 15));
+        noteName.setFont(noteFont.getFont(Font.BOLD, 15));
         noteName.setHorizontalAlignment(SwingConstants.CENTER);
         noteName.setVerticalAlignment(SwingConstants.CENTER);
+    }
 
-        JPanel topPanel = new JPanel();
+    private void setTopPanel() {
         topPanel.setLayout(new BorderLayout());
         topPanel.setBackground(new Color(200, 200, 200));
         topPanel.setPreferredSize(new Dimension(0, 30));
         topPanel.add(noteName, BorderLayout.NORTH);
+    }
 
-        ta = new JTextArea();
-        ta.setText(content);
+    private void setTa() {
         ta.setForeground(Color.WHITE);
-        ta.setFont(Fonts.getRegularFont(Font.PLAIN, 20));
         ta.setBackground(new Color(51, 51, 51));
-        topPanel.addMouseListener(new MouseInputAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                System.out.println("a");
-                getPressed = e;
-            }
-        });
+        ta.setCaretColor(Color.WHITE);
+        ta.setFont(noteFont.getFont(Font.BOLD, 20));
+        ta.setLineWrap(true);
 
-        topPanel.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                updatePos(e.getX(), e.getY());
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-
-            }
-        });
-
-        ta.getInputMap().put(closeWindowKS, "aCloseWindow");
-        ta.getActionMap().put("aCloseWindow", aCloseWindow);
-
-        this.setLayout(new BorderLayout());
-        this.add(topPanel, BorderLayout.NORTH);
-        this.add(ta, BorderLayout.CENTER);
-        this.setSize(new Dimension(300, 400));
-        this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setAlwaysOnTop(true);
-        this.setUndecorated(true);
-        this.setLocationRelativeTo(this.getParent());
-        this.setVisible(true);
+        ta.setText(DataMgmt.loadData(data));
     }
 
-    private void updatePos(int x, int y) {
-        int a = this.getX() - getPressed.getX() + x;
-        int b = this.getY() - getPressed.getY() + y;
-        this.setLocation(a, b);
-    }
 
-    private void onClose() {
-        try {
-            if (!ta.getText().isBlank()) {
-                String formattedContent = "{"+ ta.getText().replaceAll("[{}]", "") + "},";
-                note.setStickyNoteContent(formattedContent);
-                note.setTitle(formattedContent.split("\n")[0].substring(1));
-            } else {
-                note.setStickyNoteContent("{}");
-                note.setTitle("new");
-            }
-
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        this.dispose();
-    }
-
-    public class CloseWindow extends AbstractAction {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            onClose();
-            note.getParent().requestFocus();
-        }
+    public static void main(String[] args) {
+        new StickyNotes(new Data("new"));
     }
 }

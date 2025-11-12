@@ -4,76 +4,91 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Note extends JPanel {
-    private String stickyNoteContent;
-    private JLabel noteName;
-    private String noteTitle;
+    private Data data;
 
-    public Note(String name, String stickyNoteContent, int w, int h) {
-        this.stickyNoteContent = stickyNoteContent;
-        noteTitle = name;
+    private JLabel noteLabel;
+    private NoteFont noteFont;
 
-        noteName = new JLabel(name);
-        noteName.setForeground(Color.WHITE);
-        noteName.setFont(Fonts.getRegularFont(Font.PLAIN, 15));
+    private JButton openStickyNoteButton;
+    private JButton deleteNoteButton;
+    private JPanel wrapButtons;
 
-        JButton deleteNoteButton = new JButton("X");
-        deleteNoteButton.setBackground(new Color(51, 51, 51));
-        deleteNoteButton.setFont(Fonts.getRegularFont(Font.PLAIN, 15));
-        deleteNoteButton.setForeground(Color.WHITE);
-        deleteNoteButton.setBorder(null);
-        deleteNoteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        deleteNoteButton.addActionListener(l -> deleteNote());
+    private JPanel wrapElements;
 
-        JButton openStickyNoteButton = new JButton("->");
+    public Note(Data data) {
+        this.data = data;
+
+        noteFont = new NoteFont();
+
+        noteLabel = new JLabel(data.getName());
+        setNoteLabel();
+
+        openStickyNoteButton = new JButton("->");
+        openStickyNoteButton();
+
+        deleteNoteButton = new JButton("X");
+        setDeleteNoteButton();
+
+        wrapButtons = new JPanel();
+        setWrapButtons();
+
+        wrapElements = new JPanel();
+        setwrapElements();
+
+        wrapElements.add(noteLabel, BorderLayout.CENTER);
+        wrapElements.add(wrapButtons, BorderLayout.EAST);
+
+        this.setLayout(new BorderLayout());
+        this.add(wrapElements, BorderLayout.CENTER);
+        this.setPreferredSize(new Dimension(320, 40));
+        this.setBackground(new Color(51, 51, 51));
+    }
+
+    private void setNoteLabel() {
+        noteLabel.setForeground(Color.WHITE);
+        noteLabel.setFont(noteFont.getFont(Font.PLAIN, 15));
+    }
+
+    private void openStickyNoteButton() {
         openStickyNoteButton.setBackground(new Color(51, 51, 51));
-        openStickyNoteButton.setFont(Fonts.getRegularFont(Font.PLAIN, 15));
+        openStickyNoteButton.setFont(noteFont.getFont(java.awt.Font.PLAIN, 15));
         openStickyNoteButton.setForeground(Color.WHITE);
         openStickyNoteButton.setBorder(null);
         openStickyNoteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openStickyNoteButton.addActionListener(_ -> openStickyNote());
+    }
 
-        JPanel wrapButtons = new JPanel();
+    private void openStickyNote() {
+        new StickyNotes(data);
+    }
+
+    private void setDeleteNoteButton() {
+        deleteNoteButton.setBackground(new Color(51, 51, 51));
+        deleteNoteButton.setFont(noteFont.getFont(java.awt.Font.PLAIN, 15));
+        deleteNoteButton.setForeground(Color.WHITE);
+        deleteNoteButton.setBorder(null);
+        deleteNoteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        deleteNoteButton.addActionListener(l -> deleteNote());
+    }
+
+    private void setWrapButtons() {
         wrapButtons.setBackground(new Color(51, 51, 51));
         wrapButtons.setLayout(new FlowLayout());
         wrapButtons.add(deleteNoteButton);
         wrapButtons.add(openStickyNoteButton);
-
-        JPanel wrapTop = new JPanel();
-        wrapTop.setLayout(new BorderLayout());
-        wrapTop.setBackground(new Color(51, 51, 51));
-
-        wrapTop.add(noteName, BorderLayout.CENTER);
-        wrapTop.add(wrapButtons, BorderLayout.EAST);
-
-        this.setLayout(new BorderLayout());
-        this.add(wrapTop, BorderLayout.CENTER);
-        this.setPreferredSize(new Dimension(w, h));
-        this.setBackground(new Color(51, 51, 51));
     }
 
-    public void setTitle(String name) {
-        noteName.setText(name);
-    }
-
-    public void setStickyNoteContent(String stickyNoteContent) {
-        this.stickyNoteContent = stickyNoteContent;
-    }
-
-    public String getStickyNoteContent() {
-        return stickyNoteContent;
+    private void setwrapElements() {
+        wrapElements.setLayout(new BorderLayout());
+        wrapElements.setBackground(new Color(51, 51, 51));
     }
 
     private void deleteNote() {
-        Window.NOTES.remove(this);
+        DataMgmt.DATA_INDEX.remove(data);
+        DataMgmt.updateDataObjects(null);
         Container parent = this.getParent();
         parent.remove(this);
         parent.revalidate();
         parent.repaint();
-    }
-
-    public void openStickyNote() {
-        if (!stickyNoteContent.isBlank()) {
-            new StickyNotes(noteTitle, stickyNoteContent.substring(1, stickyNoteContent.length()-2), this);
-        } else new StickyNotes(noteTitle, stickyNoteContent, this);
     }
 }
