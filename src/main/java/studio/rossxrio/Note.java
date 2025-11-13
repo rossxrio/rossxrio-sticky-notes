@@ -22,6 +22,7 @@ public class Note extends JPanel {
 
         noteLabel = new JLabel();
         setNoteLabel();
+        setNoteName();
 
         openStickyNoteButton = new JButton("->");
         openStickyNoteButton();
@@ -47,12 +48,15 @@ public class Note extends JPanel {
     public void setNoteLabel() {
         noteLabel.setForeground(Color.WHITE);
         noteLabel.setFont(noteFont.getFont(Font.PLAIN, 15));
+
+    }
+
+    public void setNoteName() {
         noteLabel.setText(data.getName());
     }
 
     public void setData(Data data) {
         this.data = data;
-        DataMgmt.updateDataObjects();
     }
 
     private void openStickyNoteButton() {
@@ -78,8 +82,9 @@ public class Note extends JPanel {
     }
 
     private void deleteNote() {
-        DataMgmt.DATA_INDEX.remove(data);
-        DataMgmt.updateDataObjects();
+        DataMgmt.deleteDataObject(data);
+        DataMgmt.updateDataFile();
+
         Container parent = this.getParent();
         parent.remove(this);
         parent.revalidate();

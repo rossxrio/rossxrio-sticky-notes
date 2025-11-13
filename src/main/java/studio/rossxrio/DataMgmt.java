@@ -1,7 +1,7 @@
 package studio.rossxrio;
 
 import java.io.*;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class DataMgmt {
     private final static String APP_DIR_PATH = String.format("%s%s.sticky-notes", System.getProperty("user.home"), File.separator);
@@ -10,7 +10,7 @@ public class DataMgmt {
     public final static File NOTES_DIR = new File(APP_DIR, "notes");
     public final static File CONFIG_DIR = new File(APP_DIR, ".config");
 
-    public final static HashSet<Data> DATA_INDEX = new HashSet<>();
+    private final static LinkedHashSet<Data> DATA_INDEX = new LinkedHashSet<>();
     public final static File DATA_INDEX_FILE = new File(CONFIG_DIR, "data.dat");
 
     public static void initData() {
@@ -22,7 +22,7 @@ public class DataMgmt {
         removeNonIndexedFiles();
     }
 
-    public static void updateDataObjects() {
+    public static void updateDataFile() {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_INDEX_FILE));
             for (Data d : DATA_INDEX) oos.writeObject(d);
@@ -33,9 +33,25 @@ public class DataMgmt {
         }
     }
 
+    public static void saveDataObject(Data data) {
+        DATA_INDEX.add(data);
+    }
+
+    public static void deleteDataObject(Data data) {
+        DATA_INDEX.remove(data);
+    }
+
+    public static LinkedHashSet<Data> getDataIndex() {
+        return DATA_INDEX;
+    }
+
+
     public static void saveData(Data data, String content) {
-        File f = new File(NOTES_DIR, data.getName());
-        createResource(f, data.getName(), true);
+        File d = new File(NOTES_DIR, data.getName());
+        File f = new File(data.getPath());
+        createResource(d, data.getName(), true);
+        createResource(f, data.getName(), false);
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(data.getPath()))) {
             bw.write(content);
             bw.flush();
@@ -46,6 +62,7 @@ public class DataMgmt {
 
     public static String loadData(Data data) {
         if (data.getName().equalsIgnoreCase("new")) return "";
+
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(data.getPath()))) {
             String str;
@@ -72,27 +89,32 @@ public class DataMgmt {
     public static void removeNonIndexedFiles() {
         // TO-DO temp implementation. This will do the trick for
         // now, however I want it to be more efficient.
-
         File[] files = NOTES_DIR.listFiles();
         assert files != null;
 
         if (DATA_INDEX.isEmpty()) {
-            for (File f : files) {
-                recursiveDelete(f);
-            }
+            for (File f : files) recursiveDelete(f);
             return;
         }
 
-        int i = 0;
-        for (Data dataIndex : DATA_INDEX) {
-            if (!dataIndex.getName().equalsIgnoreCase(files[i].getName())) recursiveDelete(files[i]);
-            i++;
+        for (Data d : DATA_INDEX) {
+            File lostFile = null;
+            for (File f : files) {
+                if (d.getName().equalsIgnoreCase(f.getName())) {
+                    lostFile = null;
+                    break;
+                } else lostFile = f;
+            }
+
+            if (lostFile != null) recursiveDelete(lostFile);
         }
 
+        files = NOTES_DIR.listFiles();
+        assert files != null;
         if (files.length > DATA_INDEX.size()) {
             int start = files.length - (files.length - DATA_INDEX.size());
-            for (int j = start; j < files.length; j++) {
-                recursiveDelete(files[j]);
+            for (int i = start; i < files.length; i++) {
+                recursiveDelete(files[i]);
             }
         }
 

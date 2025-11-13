@@ -30,7 +30,7 @@ public class Data implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    public void setData(String name) {
         this.name = name.replaceAll(" ", "_");
         path = String.format("%s%s%s%s%s.txt",
                 DEFAULT_PATH,

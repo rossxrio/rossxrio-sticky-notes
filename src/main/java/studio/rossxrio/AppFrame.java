@@ -97,7 +97,7 @@ public class AppFrame extends Frame {
     }
 
     public void addNotes() {
-        for (Data d : DataMgmt.DATA_INDEX) {
+        for (Data d : DataMgmt.getDataIndex()) {
             mainContentContainer.add(new Note(d));
         }
         updateGrid();
@@ -109,7 +109,7 @@ public class AppFrame extends Frame {
     }
 
     private void updateGrid() {
-        mainContentContainer.setLayout(new GridLayout(1 + Math.max(9, DataMgmt.DATA_INDEX.size()), 1, 5, 5));
+        mainContentContainer.setLayout(new GridLayout(1 + Math.max(9, DataMgmt.getDataIndex().size()), 1, 5, 5));
         refresh();
     }
 

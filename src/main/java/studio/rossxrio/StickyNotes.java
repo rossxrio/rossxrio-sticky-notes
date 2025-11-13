@@ -26,6 +26,7 @@ public class StickyNotes extends Frame {
         noteFont = new NoteFont();
 
         noteName = new JLabel();
+        setNoteNameLabel();
         setNoteName();
 
         topPanel = new JPanel();
@@ -48,8 +49,8 @@ public class StickyNotes extends Frame {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (!data.getName().equalsIgnoreCase("new")) {
-                    DataMgmt.DATA_INDEX.add(data);
-                    DataMgmt.updateDataObjects();
+                    DataMgmt.saveDataObject(data);
+                    DataMgmt.updateDataFile();
                     DataMgmt.saveData(StickyNotes.this.data, ta.getText());
                 }
                 dispose();
@@ -58,12 +59,16 @@ public class StickyNotes extends Frame {
         this.setVisible(true);
     }
 
-    private void setNoteName() {
+    private void setNoteNameLabel() {
         noteName.setText(data.getName());
         noteName.setForeground(Color.BLACK);
         noteName.setFont(noteFont.getFont(Font.BOLD, 15));
         noteName.setHorizontalAlignment(SwingConstants.CENTER);
         noteName.setVerticalAlignment(SwingConstants.CENTER);
+    }
+
+    private void setNoteName() {
+        noteName.setText(data.getName());
     }
 
     private void setTopPanel() {
@@ -86,12 +91,10 @@ public class StickyNotes extends Frame {
             public void insertUpdate(DocumentEvent e) {
                 onUpdateText();
             }
-
             @Override
             public void removeUpdate(DocumentEvent e) {
                 onUpdateText();
             }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
                 onUpdateText();
@@ -102,10 +105,11 @@ public class StickyNotes extends Frame {
     private void onUpdateText() {
         try {
             String[] name = ta.getDocument().getText(0, Math.min(ta.getDocument().getLength(), 15)).split("\n", 2);
-            data.setName((name[0].isBlank() ? "unnamed" : name[0]));
+            data.setData((name[0].isBlank() ? "new" : name[0]));
             setNoteName();
+
             context.setData(data);
-            context.setNoteLabel();
+            context.setNoteName();
             refresh();
         } catch (BadLocationException e) {
             throw new RuntimeException(e);
