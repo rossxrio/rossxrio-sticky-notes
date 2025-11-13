@@ -68,7 +68,7 @@ public class Note extends JPanel {
         openStickyNoteButton.addActionListener(_ -> openStickyNote());
     }
 
-    private void openStickyNote() {
+    public void openStickyNote() {
         new StickyNotes(data, this);
     }
 

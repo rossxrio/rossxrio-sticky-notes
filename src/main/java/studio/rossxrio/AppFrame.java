@@ -2,39 +2,33 @@ package studio.rossxrio;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class AppFrame extends Frame {
     private JLabel appName;
     private JButton addNoteButton;
     private NoteFont noteFont;
-    private JPanel wrapTop;
 
+    private JPanel wrapTop;
     private JPanel mainContentContainer;
     private JScrollPane jScrollPane;
 
-//    private Action aCloseWindow;
-//    private Action aNewNote;
-//    private Action aDelLastNote;
-//    private Action aOpenLastNote;
 
-//    private KeyStroke ksCloseWindow;
-//    private KeyStroke ksNewNote;
-//    private KeyStroke ksDelLastNote;
-//    private KeyStroke ksOpenLastNote;
+    private Action aCreateNewNote;
+    private Action aDeleteLastNote;
+    private Action aOpenLastNote;
+
+    private KeyStroke ksCreateNewNote;
+    private KeyStroke ksDeleteLastNote;
+    private KeyStroke ksOpenLastNote;
+
     private final int[] startPos;
 
     public AppFrame() {
         super(350, 650);
         noteFont = new NoteFont();
-//        aCloseWindow = new AppFrame.CloseWindow();
-//        aNewNote = new AppFrame.NewNote();
-//        aDelLastNote = new AppFrame.DelLastNote();
-//        aOpenLastNote = new AppFrame.OpenLastNote();
-
-//        ksCloseWindow = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false);
-//        ksNewNote = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false);
-//        ksDelLastNote = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
-//        ksOpenLastNote = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, false);
 
         appName = new JLabel("Sticky NOTES", SwingConstants.LEFT);
         setAppName();
@@ -53,9 +47,15 @@ public class AppFrame extends Frame {
         setScrollPane();
         addNotes();
 
-//        addKeyStrokes(wrapTop);
-//        addKeyStrokes(mainContentContainer);
-//        addKeyStrokes(jScrollPane);
+        aCreateNewNote = new AppActions.CreateNewNote(mainContentContainer);
+        aDeleteLastNote = new AppActions.DeleteLastNote(mainContentContainer);
+        aOpenLastNote = new AppActions.OpenLastNote(mainContentContainer);
+
+        ksCreateNewNote = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK, false);
+        ksDeleteLastNote = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+        ksOpenLastNote = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, false);
+
+        addKeyStrokes(wrapTop);
 
         startPos = getStartPos();
 
@@ -64,7 +64,7 @@ public class AppFrame extends Frame {
         this.setLocationRelativeTo(null);
         this.setLocation(startPos[0], startPos[1]);
         this.setResizable(false);
-        this.setUndecorated(false);
+        this.setUndecorated(true);
         this.setVisible(true);
     }
 
@@ -79,6 +79,28 @@ public class AppFrame extends Frame {
         wrapTop.setBackground(new Color(32, 32, 32));
         wrapTop.addMouseMotionListener(new DraggableWindowZone());
         wrapTop.addMouseListener(new DraggableWindowZone());
+        wrapTop.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (Character.isDigit(e.getKeyChar())) {
+                    int n = Character.getNumericValue(e.getKeyChar());
+                    if (n <= mainContentContainer.getComponents().length) {
+                        Note note = (Note) mainContentContainer.getComponent(n - 1);
+                        note.openStickyNote();
+                    }
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         return wrapTop;
     }
 
@@ -109,7 +131,7 @@ public class AppFrame extends Frame {
     }
 
     private void updateGrid() {
-        mainContentContainer.setLayout(new GridLayout(1 + Math.max(9, DataMgmt.getDataIndex().size()), 1, 5, 5));
+        mainContentContainer.setLayout(new GridLayout(Math.max(10, mainContentContainer.getComponents().length), 1, 10, 10));
         refresh();
     }
 
@@ -119,14 +141,16 @@ public class AppFrame extends Frame {
         jScrollPane.setBorder(null);
     }
 
-//    private void addKeyStrokes(JComponent container) {
-//        container.getInputMap().put(ksCloseWindow, "aCloseWindow");
-//        container.getActionMap().put("aCloseWindow", aCloseWindow);
-//        container.getInputMap().put(ksNewNote, "aNewNote");
-//        container.getActionMap().put("aNewNote", aNewNote);
-//        container.getInputMap().put(ksDelLastNote, "aDelLastNote");
-//        container.getActionMap().put("aDelLastNote", aDelLastNote);
-//        container.getInputMap().put(ksOpenLastNote, "aOpenLastNote");
-//        container.getActionMap().put("aOpenLastNote", aOpenLastNote);
-//    }
+    @Override
+    public void addKeyStrokes(JComponent container) {
+        super.addKeyStrokes(container);
+        container.getInputMap().put(ksCreateNewNote, "aCreateNewNote");
+        container.getActionMap().put("aCreateNewNote", aCreateNewNote);
+
+        container.getInputMap().put(ksDeleteLastNote, "aDeleteLastNote");
+        container.getActionMap().put("aDeleteLastNote", aDeleteLastNote);
+
+        container.getInputMap().put(ksOpenLastNote, "aOpenLastNote");
+        container.getActionMap().put("aOpenLastNote", aOpenLastNote);
+    }
 }

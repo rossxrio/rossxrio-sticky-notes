@@ -39,6 +39,10 @@ public class StickyNotes extends Frame {
         jScrollPane.setBorder(null);
         jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
+        addKeyStrokes(topPanel);
+        addKeyStrokes(ta);
+        addKeyStrokes(jScrollPane);
+
         this.setLayout(new BorderLayout());
         this.setAlwaysOnTop(true);
         this.setUndecorated(false);

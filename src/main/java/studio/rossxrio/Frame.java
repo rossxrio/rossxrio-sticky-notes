@@ -3,6 +3,8 @@ package studio.rossxrio;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
@@ -10,7 +12,13 @@ public class Frame extends JFrame {
 
     private MouseEvent pressedPos;
 
+    public Action aCloseFrame;
+    public KeyStroke ksCloseFrame;
+
     public Frame(int w, int h) {
+        aCloseFrame = new AppActions.CloseFrame(this);
+        ksCloseFrame = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK, false);
+
         this.setSize(new Dimension(w, h));
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -36,6 +44,11 @@ public class Frame extends JFrame {
     public void refresh() {
         this.revalidate();
         this.repaint();
+    }
+
+    public void addKeyStrokes(JComponent container) {
+        container.getInputMap().put(ksCloseFrame, "aCloseFrame");
+        container.getActionMap().put("aCloseFrame", aCloseFrame);
     }
 
     public class DraggableWindowZone implements MouseMotionListener, MouseInputListener {
