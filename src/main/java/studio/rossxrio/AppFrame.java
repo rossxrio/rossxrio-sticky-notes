@@ -56,6 +56,8 @@ public class AppFrame extends Frame {
         ksOpenLastNote = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, false);
 
         addKeyStrokes(wrapTop);
+        addKeyStrokes(mainContentContainer);
+        addKeyStrokes(jScrollPane);
 
         startPos = getStartPos();
 
@@ -77,8 +79,9 @@ public class AppFrame extends Frame {
         JPanel wrapTop = new JPanel();
         wrapTop.setLayout(new FlowLayout());
         wrapTop.setBackground(new Color(32, 32, 32));
-        wrapTop.addMouseMotionListener(new DraggableWindowZone());
         wrapTop.addMouseListener(new DraggableWindowZone());
+        wrapTop.addMouseMotionListener(new DraggableWindowZone());
+
         wrapTop.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {

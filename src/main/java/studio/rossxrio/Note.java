@@ -81,7 +81,7 @@ public class Note extends JPanel {
         deleteNoteButton.addActionListener(l -> deleteNote());
     }
 
-    private void deleteNote() {
+    public void deleteNote() {
         DataMgmt.deleteDataObject(data);
         DataMgmt.updateDataFile();
 

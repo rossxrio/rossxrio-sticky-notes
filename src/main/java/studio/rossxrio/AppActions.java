@@ -44,7 +44,8 @@ public class AppActions {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            context.remove(context.getComponent(context.getComponents().length - 1));
+            Note note = (Note) context.getComponent(context.getComponents().length - 1);
+            note.deleteNote();
             context.getParent().revalidate();
             context.getParent().repaint();
         }
