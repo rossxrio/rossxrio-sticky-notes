@@ -56,6 +56,8 @@ public class AppFrame extends Frame {
         ksOpenLastNote = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, false);
 
         addKeyStrokes(wrapTop);
+        addKeyStrokes(mainContentContainer);
+        addKeyStrokes(jScrollPane);
 
         startPos = getStartPos();
 

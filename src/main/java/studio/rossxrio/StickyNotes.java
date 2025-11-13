@@ -5,6 +5,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -22,6 +23,8 @@ public class StickyNotes extends Frame {
         super(300, 400);
         this.data = data;
         this.context = context;
+
+        aCloseFrame = new CloseStickyNote();
 
         noteFont = new NoteFont();
 
@@ -45,26 +48,21 @@ public class StickyNotes extends Frame {
 
         this.setLayout(new BorderLayout());
         this.setAlwaysOnTop(true);
-        this.setUndecorated(false);
+        this.setUndecorated(true);
         this.setLocationRelativeTo(this.getParent());
         this.add(topPanel, BorderLayout.NORTH);
         this.add(jScrollPane, BorderLayout.CENTER);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (!data.getName().equalsIgnoreCase("new")) {
-                    DataMgmt.saveDataObject(data);
-                    DataMgmt.updateDataFile();
-                    DataMgmt.saveData(StickyNotes.this.data, ta.getText());
-                }
-                dispose();
+                onClose();
             }
         });
         this.setVisible(true);
     }
 
     private void setNoteNameLabel() {
-        noteName.setText(data.getName());
+        setNoteName();
         noteName.setForeground(Color.BLACK);
         noteName.setFont(noteFont.getFont(Font.BOLD, 15));
         noteName.setHorizontalAlignment(SwingConstants.CENTER);
@@ -73,6 +71,7 @@ public class StickyNotes extends Frame {
 
     private void setNoteName() {
         noteName.setText(data.getName());
+        context.setNoteName();
     }
 
     private void setTopPanel() {
@@ -110,13 +109,31 @@ public class StickyNotes extends Frame {
         try {
             String[] name = ta.getDocument().getText(0, Math.min(ta.getDocument().getLength(), 15)).split("\n", 2);
             data.setData((name[0].isBlank() ? "new" : name[0]));
+            context.setData(data);
             setNoteName();
 
-            context.setData(data);
-            context.setNoteName();
             refresh();
         } catch (BadLocationException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void onClose() {
+        if (!data.getName().equalsIgnoreCase("new")) {
+            DataMgmt.validateDataName(data);
+            setNoteName();
+            DataMgmt.saveDataObject(data);
+            DataMgmt.updateDataFile();
+            DataMgmt.saveData(StickyNotes.this.data, ta.getText());
+        }
+        dispose();
+    }
+
+    public class CloseStickyNote extends AbstractAction {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            onClose();
         }
     }
 }

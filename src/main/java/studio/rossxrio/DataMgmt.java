@@ -1,6 +1,7 @@
 package studio.rossxrio;
 
 import java.io.*;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 public class DataMgmt {
@@ -35,6 +36,17 @@ public class DataMgmt {
 
     public static void saveDataObject(Data data) {
         DATA_INDEX.add(data);
+    }
+
+    public static void validateDataName(Data data) {
+        int i = 1;
+        for (Data d : DATA_INDEX) {
+            while (d.getName().equalsIgnoreCase(data.getName()) && d != data) {
+                data.setData(String.format("%s_%d", data.getName(), i));
+                i++;
+            }
+        }
+
     }
 
     public static void deleteDataObject(Data data) {
