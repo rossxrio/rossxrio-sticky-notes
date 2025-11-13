@@ -7,6 +7,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.net.URL;
 
 public class Frame extends JFrame {
 
@@ -23,6 +24,10 @@ public class Frame extends JFrame {
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().setBackground(new Color(32, 32, 32));
+        URL url = getClass().getResource("/icon/icon.png");
+        assert url != null;
+        ImageIcon imageIcon = new ImageIcon(url);
+        this.setIconImage(imageIcon.getImage());
     }
 
     public int[] getStartPos() {
