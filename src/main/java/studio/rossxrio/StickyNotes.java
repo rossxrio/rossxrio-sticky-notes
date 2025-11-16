@@ -59,6 +59,7 @@ public class StickyNotes extends Frame {
             }
         });
         this.setVisible(true);
+        ta.requestFocus();
     }
 
     private void setNoteNameLabel() {

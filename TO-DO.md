@@ -1,5 +1,4 @@
-1. Fix keybinds not triggering because component focus loss.
-2. Add resizeable Frame borders.
-3. Overhaul Sticky notes UI.
-4. Find a better icon.
-5. Add Markdown support :D.
+1. Add resizeable Frame borders.
+2. Overhaul Sticky notes UI.
+3. Find a better icon.
+4. Add Markdown support :D.

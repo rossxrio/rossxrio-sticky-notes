@@ -59,6 +59,8 @@ public class AppFrame extends Frame {
         addKeyStrokes(mainContentContainer);
         addKeyStrokes(jScrollPane);
 
+        wrapTop.requestFocus();
+
         startPos = getStartPos();
 
         this.add(wrapTop, BorderLayout.NORTH);
